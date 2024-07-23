@@ -167,6 +167,11 @@
                     <button class="btn btn-info ml-3" id="busca">BUSCAR</button>    
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-4 align-self-end">
+                    <a class="btn btn-info ml-3" href="/home/asignaciones/agregar/{{idPersona}}/{{docente}}/{{admin}}">CREAR ASIGNACION</a>    
+                </div>
+            </div>
         </div>
     </div>
     
@@ -181,10 +186,7 @@
                         <th>Numero - Unidades</th>
                         <th>Cedula - Docente</th>
                         <th>Id - Materia</th>
-                        <th>Id - Cursa</th>
                         <th>Acciones</th>
-                        <th>Unidades</th>
-                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -194,10 +196,7 @@
                             <td>{{ item.numero_unidades }}</td>
                             <td>{{ item.cedula_docente }}</td>
                             <td>{{ item.id_materia }}</td>
-                            <td>{{ item.id_cursa }}</td>
                             <td><a href="/home/asignaciones/editar/{{ idPersona }}/{{ docente }}/{{ admin }}?id={{ item.id }}" class="btn btn-primary btn-sm">Modificar</a></td>
-                            <td><a href="/seguimiento/unidades/{{ item.id }}" class="btn btn-success btn-sm">Unidades</a></td>
-                            <td><a href="/docentes/eliminar/{{ item.id }}" class="btn btn-danger btn-sm">Eliminar</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

@@ -22,7 +22,6 @@ class PersonaDaoControl(DaoAdapter):
     
     @property 
     def save(self):
-        print("PersonaDaoControl.save")
         return self._save(self._persona)
     
     def merge(self, pos):

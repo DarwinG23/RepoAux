@@ -160,6 +160,11 @@
                     <button class="btn btn-info ml-3" id="busca">BUSCAR</button>    
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-4 align-self-end">
+                    <a class="btn btn-info ml-3" href="/home/materias/agregar/{{idPersona}}/{{docente}}/{{admin}}">CREAR</a>    
+                </div>
+            </div>
         </div>
     </div>
 <br>
@@ -174,7 +179,6 @@
                     <th>Codigo</th>
                     <th>Horas</th>
                     <th>Acciones</th>
-                    <th>Eliminar</th>
                 </tr>
             </thead>
             <tbody>
@@ -185,7 +189,6 @@
                         <td>{{ item.codigo }}</td>
                         <td>{{ item.horas }}</td>
                         <td><a href="/docentes/editar/{{ item.id }}" class="btn btn-primary btn-sm">Modificar</a></td>
-                        <td><a href="/docentes/eliminar/{{ item.id }}" class="btn btn-danger btn-sm">Eliminar</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -1,6 +1,7 @@
 from models.persona import Persona
 from models.rol import Rol
 from controls.tda.linked.linkedList import Linked_List
+from controls.login.personaDaoControl import PersonaDaoControl  
 
 class Docente(Persona):
     def __init__(self):
@@ -67,20 +68,20 @@ class Docente(Persona):
     
     def deserializar(data):
         docente = Docente()
+        personas = PersonaDaoControl()._list()
+        persona = personas.binary_search_models(str(data["idpersona"]), "_id")
+        if persona != -1:
+            docente._dni = persona._dni
+            docente._nombre = persona._nombre
+            docente._apellido = persona._apellido
+            docente._fechaNacimiento =  persona._fechaNacimiento
+            docente._numTelefono = persona._numTelefono
+            docente._roles = persona._roles
         docente._id = data["id"]
-        docente._dni = data["dni"]
-        docente._nombre = data["nombre"]
-        docente._apellido = data["apellido"]
-        docente._fechaNacimiento = data["fechaNacimiento"]
-        docente._numTelefono = data["numTelefono"]
-        docente._idCuenta = data["idCuenta"]
-        clase = Rol()
-        docente._roles = Linked_List().deserializar(data["roles"], clase)
         docente._titulo = data["titulo"]
         docente._cubiculo = data["cubiculo"]
-        docente._idiomas = data["idiomas"]
-        docente._tipoContrato = data["tipoContrato"]
-        docente._idPersona = data["idPersona"]
+        docente._tipoContrato = data["tipocontrato"]
+        docente._idPersona = data["idpersona"]
         return docente
     
     def __str__(self) -> str:

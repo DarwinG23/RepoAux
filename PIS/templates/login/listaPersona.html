@@ -127,7 +127,7 @@
 
 <div class="container my-4">
     <div class="text-center mb-4">
-        <h1 class="display-5 text-dark">Lista - Personas</h1>
+        <h1 class="display-5 text-dark">Personas</h1>
     </div>
     
     <div class="card mb-4">
@@ -159,6 +159,12 @@
                     <button class="btn btn-info ml-3" id="busca">BUSCAR</button>    
                 </div>
             </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 align-self-end">
+                    <a class="btn btn-info ml-3" href="/home/personas/agregar/{{idPersona}}/{{docente}}/{{admin}}">CREAR PERSONA</a>    
+                </div>
+            </div>
         </div>
     </div>
 <br>
@@ -174,10 +180,8 @@
                     <th>Apellido</th>
                     <th>Fecha de Nacimiento</th>
                     <th>Teléfono</th>
-                    <th>Id Cuenta</th>
                     <th>Modificar</th>
-                    <th>Roles</th>
-                    <th>Eliminar</th>
+                    <th>Rol</th>
                 </tr>
             </thead>
             <tbody>
@@ -189,10 +193,8 @@
                         <td>{{ item.apellido }}</td>
                         <td>{{ item.fechaNacimiento }}</td>
                         <td>{{ item.numTelefono }}</td>
-                        <td>{{ item.idCuenta }}</td>
                         <td><a href="/docentes/editar/{{ item.id }}" class="btn btn-primary btn-sm">Modificar</a></td>
-                        <td><a href="/login/rol/{{ item.id }}" class="btn btn-success btn-sm">Roles</a></td>
-                        <td><a href="/docentes/eliminar/{{ item.id }}" class="btn btn-danger btn-sm">Eliminar</a></td>
+                        <td><a href="/home/personas/addRol/{{idPersona}}/{{docente}}/{{admin}}/{{ item.id }}" class="btn btn-primary btn-danger">AGREGAR ROL</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

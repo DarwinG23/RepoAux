@@ -75,21 +75,21 @@ class Estudiante(Persona):
         personas = PersonaDaoControl()._list()
         persona = personas.binary_search_models(str(data["idpersona"]), "_id")
         estudiante._id = data["id"]
-        estudiante._dni = persona._dni
-        estudiante._nombre = persona._nombre
-        estudiante._apellido = persona._apellido
-        estudiante._fechaNacimiento = persona._fechaNacimiento
-        estudiante._numTelefono = persona._numTelefono
+        if persona != -1:
+            estudiante._dni = persona._dni
+            estudiante._nombre = persona._nombre
+            estudiante._apellido = persona._apellido
+            estudiante._fechaNacimiento = persona._fechaNacimiento
+            estudiante._numTelefono = persona._numTelefono
+            #HACER CONSULTA
+            rc = RolDaoControl()
+            if rc._list().isEmpty:
+                roles = Linked_List()
+            else:
+                roles = rc._list()
+                roles = roles.lineal_binary_search_models(str(persona._id),"_idPersona")
+            estudiante._roles = roles
         estudiante._idPersona = data["idpersona"]
-        #HACER CONSULTA
-        rc = RolDaoControl()
-        if rc._list().isEmpty:
-            roles = Linked_List()
-        else:
-            roles = rc._list()
-            roles = roles.lineal_binary_search_models(str(persona._id),"_idPersona")
-        estudiante._roles = roles
-        
         estudiante._nota = data["promedio"]
         estudiante._asistencia = data["asistencia"]
         estudiante._colegioProcedencia = data["colegioprocedencia"]

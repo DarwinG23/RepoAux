@@ -57,16 +57,21 @@ class DaoAdapter(Generic[T]):
         sql = f"INSERT INTO {tabla} ({columns}) VALUES ({data_values})"
         cur = self.conn._db.cursor()
         print("LOG:" + sql)
+        band = False
         try:
             cur.execute(sql)
             self.conn._db.commit()
             print("Se ha guardado el registro")
+            band = True
         except Exception as e:
             print("Error al hacer comit:", e)
             self.conn._db.rollback()
+            band = False
         finally:
             cur.close()
             print("Se ha cerrado la conexión")
+        
+        return band
     
     
     def _merge(self, data: T, pos) -> T:

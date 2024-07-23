@@ -92,8 +92,7 @@ class Asignacion:
     @classmethod
     def deserializar(self, data):
         asignacion = Asignacion()
-        asignacion._id = data["id"]
-        asignacion._numero_unidades = data["numero_unidades"]
+        asignacion._id = data["id"]        
         asignacion._cedula_docente = data["cedula_docente"]
         asignacion._id_materia = data["id_materia"]
         #CONSULTAS
@@ -102,7 +101,7 @@ class Asignacion:
             cursas = Linked_List()
         else:
             cursas = cc._list()
-            cursas = cursas.lineal_binary_search_models(asignacion._id,"_asignacion")        
+            cursas = cursas.lineal_binary_search_models(str(asignacion._id),"_asignacion")        
         asignacion._cursas = cursas
         
         uc = UnidadControl()
@@ -110,15 +109,15 @@ class Asignacion:
             unidades = Linked_List()
         else:
             unidades = uc._list()
-            unidades = unidades.lineal_binary_search_models(asignacion._id,"_asignacion")
+            unidades = unidades.lineal_binary_search_models(str(asignacion._id),"_asignacion")
         asignacion._unidades = unidades
-        
+        asignacion._numero_unidades = unidades._length
         rc = ReporteControl()
         if rc._list().isEmpty:
             reportes = Linked_List()
         else:
             reportes = rc._list()
-            reportes = reportes.lineal_binary_search_models(asignacion._id,"_idAsignacion")
+            reportes = reportes.lineal_binary_search_models(str(asignacion._id),"_idAsignacion")
         asignacion._reportes = reportes
         
         return asignacion
