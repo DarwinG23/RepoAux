@@ -108,6 +108,7 @@
                         
                         <a class="dropdown-item" href="/home/docentes/{{idPersona}}/{{docente}}/{{admin}}">Docentes</a>
                         <a class="dropdown-item" href="/home/estudiantes/{{idPersona}}/{{docente}}/{{admin}}">Estudiantes</a>
+                        <a class="dropdown-item" href="/home/personas/ver/{{idPersona}}/{{docente}}/{{admin}}">Personas</a>
                     </div>
                 </li>
                 {% endif %}
@@ -127,81 +128,36 @@
 
 <div class="container my-4">
     <div class="text-center mb-4">
-        <h1 class="display-5 text-dark">Personas</h1>
+        <h1 class="display-5 text-dark">Seleccione el Rol</h1>
     </div>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="criterio">Criterio:</label>
-                    <select id="criterio" class="custom-select" style="margin-left: 15%">
-                        <option value="_dni">DNI</option>
-                        <option value="_nombre">Nombre</option>
-                        <option value="_apellido">Apellido</option>
-                        <option value="_idCuenta">Id Cuenta</option>
-                    </select>
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <div class="custom-control custom-checkbox" style="margin-left: 15%">
-                        <input type="checkbox" class="custom-control-input" id="tipo">
-                        <label class="custom-control-label" for="tipo">DESCENDENTE</label>
-                    </div>
-                    <button class="btn btn-info ml-3" id="link">ORDENAR</button>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4" >
-                    <label for="valor">Texto:</label>
-                    <input type="text" id="valor" class="form-control" placeholder="Ingrese el valor a buscar" style="margin-left: 15%">
-                </div>
-                <div class="col-md-4 align-self-end">
-                    <button class="btn btn-info ml-3" id="busca">BUSCAR</button>    
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-4 align-self-end">
-                    <a class="btn btn-info ml-3" href="/home/personas/agregar/{{idPersona}}/{{docente}}/{{admin}}">CREAR PERSONA CUENTA</a>    
-                </div>
-                <div class="col-md-4 align-self-end">
-                    <a class="btn btn-info ml-3" href="/home/personas/agregar/{{idPersona}}/{{docente}}/{{admin}}">CREAR ESTUDIANTE </a>    
-                </div>
+    <form id="form" class="custom-form booking-form" action="/home/personas/addRol/verificar/{{idPersona}}/{{docente}}/{{admin}}/{{idItem}}" method="post" role="form">
+        <div class="card mb-4">
+            <div class="card-body">
+                {% with messages = get_flashed_messages(category_filter='error', with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert alert-danger">
+                            {% for category, message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                 {% endwith %}
+                <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="criterio">Rol:</label>
+                            <select id="rol" name="rol" class="custom-select" style="margin-left: 15%">
+                                <option value="Administrador">Admnistrador</option>
+                                <option value="Docente">Docente</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn-info text-white" style="margin-left: 5%;">Agregar</button>
+                </div>>
             </div>
         </div>
-    </div>
+    </form>
 <br>
 <br>
-<div class="row">
-    <div class="col-12">
-        <table id="tabla" class="table table-striped table-bordered text-center bg-white">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Nro</th>
-                    <th>Dni</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Teléfono</th>
-                    <th>Modificar</th>
-                    <th>Rol</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in lista %}
-                    <tr>
-                        <td>{{ item.id}}</td>
-                        <td>{{ item.dni }}</td>
-                        <td>{{ item.nombre }}</td>
-                        <td>{{ item.apellido }}</td>
-                        <td>{{ item.fechaNacimiento }}</td>
-                        <td>{{ item.numTelefono }}</td>
-                        <td><a href="/docentes/editar/{{ item.id }}" class="btn btn-primary btn-sm">Modificar</a></td>
-                        <td><a href="/home/personas/addRol/{{idPersona}}/{{docente}}/{{admin}}/{{ item.id }}" class="btn btn-primary btn-danger">AGREGAR ROL</a></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    
 </div>
 {% endblock %}

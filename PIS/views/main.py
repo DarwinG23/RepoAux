@@ -34,14 +34,15 @@ con = Connection()
 
 try:
    
-   rec._reporte._cedulaEstudiante = "1108853832"
-   rec._reporte._nota = 5.3
-   rec._reporte._asistencia = 70
-   rec._reporte._codigoUnidad = "3001"
-   rec._reporte._codigoMateria = "2464"
-   rec._reporte._numMatricula = 3
-   rec._reporte._idAsignacion = 1
-   rec.save
+   pass
+   # rec._reporte._cedulaEstudiante = "1108853832"
+   # rec._reporte._nota = 5.3
+   # rec._reporte._asistencia = 70
+   # rec._reporte._codigoUnidad = "3001"
+   # rec._reporte._codigoMateria = "2464"
+   # rec._reporte._numMatricula = 3
+   # rec._reporte._idAsignacion = 1
+   # rec.save
    
    
    # uc._unidad._nombre = "SQL"
@@ -98,9 +99,7 @@ try:
    # cc._cuenta._idPersona = pc._list()._length
    # cc._cuenta._estado = 1
    # cc.save
-   # cc._cuenta = None
-   # pc._persona = None
-   
+
    # rc._rol._nombre = "Estudiante"
    # rc._rol._descripcion = "Rol de Estudiante"
    # rc._rol._estado = 1
