@@ -205,7 +205,6 @@
                     <th>Cubículo</th>
                     <th>Tipo de Contrato</th>
                     <th>Acciones</th>
-                    <th>Eliminar</th>
                 </tr>
             </thead>
             <tbody>
@@ -218,7 +217,6 @@
                         <td>{{ item.cubiculo }}</td>
                         <td>{{ item.tipoContrato }}</td>
                         <td><a href="/docentes/editar/{{ item.id }}" class="btn btn-primary btn-sm">Modificar</a></td>
-                        <td><a href="/docentes/eliminar/{{ item.id }}" class="btn btn-danger btn-sm">Eliminar</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

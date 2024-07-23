@@ -144,6 +144,9 @@
                     <button class="btn btn-info ml-3" id="busca">BUSCAR</button>    
                 </div>
             </div>
+            <div class="col-md-4 align-self-end">
+                <a class="btn btn-info ml-3" href="/home/estudiantes/agregar/{{idPersona}}/{{docente}}/{{admin}}">CREAR ESTUDIANTE </a>    
+            </div>
         </div>
     </div>
 <br>
@@ -153,21 +156,23 @@
         <table id="tabla" class="table table-striped table-bordered text-center bg-white">
             <thead class="thead-dark">
                 <tr>
-                    <th>Notas</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Cedula</th>
                     <th>Asistencias</th>
                     <th>Colegio-Procedencia</th>
                     <th>Acciones</th>
-                    <th>Eliminar</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in lista %}
                     <tr>
-                        <td>{{ item.nota }}</td>
+                        <td>{{ item.nombre }}</td>
+                        <td>{{ item.apellido }}</td>
+                        <td>{{ item.dni }}</td>
                         <td>{{ item.asistencia }}</td>
                         <td>{{ item.colegioProcedencia }}</td>
                         <td><a href="/estudiantes/editar/{{ item.id }}" class="btn btn-primary btn-sm">Modificar</a></td>
-                        <td><a href="/estudiantes/eliminar/{{ item.id }}" class="btn btn-danger btn-sm">Eliminar</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
