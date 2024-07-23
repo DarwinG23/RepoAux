@@ -56,7 +56,7 @@ class Ciclo:
             "descripcion": self.__descripcion,
             "vigencia": self.__vigencia,
             "malla_curricular": self.__malla_curricular,
-            "materias": self.__materias.serializable
+           # "materias": self.__materias.serializable
         }
         
     @classmethod
