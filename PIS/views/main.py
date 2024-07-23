@@ -34,14 +34,14 @@ con = Connection()
 
 try:
    
-   rec._reporte._cedulaEstudiante = "1108853832"
-   rec._reporte._nota = 5.3
-   rec._reporte._asistencia = 70
-   rec._reporte._codigoUnidad = "3001"
-   rec._reporte._codigoMateria = "2464"
-   rec._reporte._numMatricula = 3
-   rec._reporte._idAsignacion = 1
-   rec.save
+   # rec._reporte._cedulaEstudiante = "1108853832"
+   # rec._reporte._nota = 5.3
+   # rec._reporte._asistencia = 70
+   # rec._reporte._codigoUnidad = "3001"
+   # rec._reporte._codigoMateria = "2464"
+   # rec._reporte._numMatricula = 3
+   # rec._reporte._idAsignacion = 1
+   # rec.save
    
    
    # uc._unidad._nombre = "SQL"
@@ -65,10 +65,19 @@ try:
    # cuc._cursa._paralelo = "B"
    # cuc.save
    
-   # pac._periodo_academico._fecha_inicio = "20/10/2021"
-   # pac._periodo_academico._fecha_fin = "01/04/2022"
+   # pac._periodo_academico._fecha_inicio = "01/10/2021"
+   # pac._periodo_academico._fecha_fin = "10/11/2022"
    # pac.save
-   
+
+   # mc._mallaCurricular._nombre = "Ingenieria en Sistemas"
+   # mc._mallaCurricular._descripcion = "Malla Curricular de Ingenieria en Sistemas"
+   # mc._mallaCurricular._vigencia = 1
+   # mc.save
+
+   cic._ciclo._descripcion = "Ciclo 1"
+   cic._ciclo._vigencia = 1
+   cic._ciclo._malla_curricular = 1
+   cic.save
    
    # dc._docente._titulo = "Ingeniero en Sistemas"
    # dc._docente._cubiculo = "A-1"
@@ -86,25 +95,25 @@ try:
    # ac._asignacion._id_materia = 1
    # ac.save
    
-   # pc._persona._apellido = "Sarango"
-   # pc._persona._nombre = "Darwin"
-   # pc._persona._dni = "1108853832"
-   # pc._persona._fechaNacimiento = "11/05/2004"
-   # pc._persona._numTelefono = "0964209135"
+   # pc._persona._apellido = "Sanchez"
+   # pc._persona._nombre = "Alexander"
+   # pc._persona._dni = "1104753890"
+   # pc._persona._fechaNacimiento = "08/10/2003"
+   # pc._persona._numTelefono = "0959681192"
    # pc.save
 
-   # cc._cuenta._correo = "darwin.granda@unl.edu.ec"
-   # cc._cuenta._contrasenia = "1234"
-   # cc._cuenta._idPersona = pc._list()._length
+   # cc._cuenta._correo = "alexander.a.sanchez@unl.edu.ec"
+   # cc._cuenta._contrasenia = "alex123"
+   # cc._cuenta._idPersona = 1
    # cc._cuenta._estado = 1
    # cc.save
    # cc._cuenta = None
    # pc._persona = None
    
-   # rc._rol._nombre = "Estudiante"
-   # rc._rol._descripcion = "Rol de Estudiante"
+   # rc._rol._nombre = "Docente"
+   # rc._rol._descripcion = "Rol de Docente"
    # rc._rol._estado = 1
-   # rc._rol._idPersona = 3
+   # rc._rol._idPersona = 1
    # rc.save
    
    

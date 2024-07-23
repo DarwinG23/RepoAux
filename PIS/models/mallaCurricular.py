@@ -57,7 +57,8 @@ class Malla_Curricular:
             "nombre": self.__nombre,
             "descripcion": self.__descripcion,
             "vigencia": self.__vigencia,
-            "ciclos": self.__ciclos.serializable
+            #"ciclos": self.__ciclos.serializable
+            #quitamos los ciclos, por que no existe en la base
         }
     
     @classmethod
@@ -67,8 +68,10 @@ class Malla_Curricular:
         malla._nombre = dict["nombre"]
         malla._descripcion = dict["descripcion"]
         malla._vigencia = dict["vigencia"]
+
+        #Hacer una consulta
         clase = Ciclo()
-        malla._ciclos = Linked_List().deserializar(dict["ciclos"], clase)
+        #malla._ciclos = Linked_List().deserializar(dict["ciclos"], clase)
         return malla
     
     def __str__(self):

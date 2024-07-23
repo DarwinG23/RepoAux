@@ -15,9 +15,12 @@ from controls.seguimiento.unidadControl import UnidadControl
 from controls.tda.linked.linkedList import Linked_List
 from controls.administrativo.periodoAcademicoControl import PeriodoAcademicoControl
 import time, math, datetime 
+
+from datetime import datetime
 from controls.read_exel.read import Read
 from io import BytesIO
 from scipy import stats
+
 
 router = Blueprint('router', __name__)
 
@@ -520,11 +523,6 @@ def lista_cursa(idPersona, docente, admin):
     return render_template('administrativo/cursa.html', lista=cc.to_dic_lista(list), idPersona=idPersona, docente = docente, admin = admin)
 
 
-@router.route('/home/ciclos/<idPersona>/<docente>/<admin>')
-def lista_ciclos(idPersona, docente, admin):
-    cc  = CicloControl()
-    list = cc._list()
-    return render_template('academico/ciclos.html', lista=cc.to_dic_lista(list), idPersona=idPersona, docente = docente, admin = admin)
 
 #Ordenar Cursas
 @router.route('/home/cursa/<tipo>/<attr>/<metodo>')
@@ -578,13 +576,7 @@ def modificar_cursas():
 
 
 
-#--------------------------------------------- Malla - Curricular--------------------------------------------------#
-
-@router.route('/home/mallas/<idPersona>/<docente>/<admin>')
-def lista_malla(idPersona, docente, admin):
-    mcc = MallaCurricularControl()
-    list = mcc._list()
-    return render_template('academico/malla.html', lista=mcc.to_dic_lista(list), idPersona=idPersona, docente = docente, admin = admin)
+#----------------------------------------------------------------------------------------------------------------------#
 
 
 @router.route('/academico/ciclos/<pos>')
@@ -601,6 +593,15 @@ def ver_ciclos_malla(pos, idPersona, docente, admin):
     ciclos = malla._ciclos
     return render_template("academico/ciclos.html",  lista = mc.to_dic_lista(ciclos), idCiclos = pos, idPersona= idPersona, docente = docente, admin = admin)  
 
+
+
+#--------------------------------------------- Malla - Curricular--------------------------------------------------#
+
+@router.route('/home/mallas/<idPersona>/<docente>/<admin>')
+def lista_malla(idPersona, docente, admin):
+    mcc = MallaCurricularControl()
+    list = mcc._list()
+    return render_template('academico/malla.html', lista=mcc.to_dic_lista(list), idPersona=idPersona, docente = docente, admin = admin)
 
 #Ordenar Malla Curricular
 @router.route('/home/malla/<tipo>/<attr>/<metodo>')
@@ -635,29 +636,192 @@ def buscar_malla(data, attr):
         200
     )
 
+#Vista de crear malla curricular
+@router.route('/home/mallas/agregar/<idPersona>/<docente>/<admin>')
+def agregar_malla(idPersona, docente, admin):
+    return render_template('academico/addMalla.html', idPersona=idPersona, docente = docente, admin = admin)
+
+#Guadar Malla Curricular
+@router.route('/home/agregarMalla/<idPersona>/<docente>/<admin>', methods=["POST"])
+def addMallaCurricular(idPersona, docente, admin):
+    mcc = MallaCurricularControl()
+    data = request.form
+    mcc._mallaCurricular._nombre = data["nombre"]
+    mcc._mallaCurricular._descripcion = data["descripcion"]
+    mcc._mallaCurricular._vigencia = data["vigencia"]
+    mcc.save
+    flash('¡Malla agregado exitosamente!', 'success')
+    return render_template('academico/addMalla.html', idPersona=idPersona, docente = docente, admin = admin)
+
+
 #Malla - Editar
 
-@router.route('/home/mallas/editarRender/<pos>/<idPersona>/<docente>/<admin>', methods=["POST"])
+@router.route('/home/mallas/editarMalla/<idPersona>/<docente>/<admin>', methods=["POST"])
 def modificar_mallas_render(pos, idPersona, docente, admin):
-    return render_template('academico/editarMalla.html', idPersona=idPersona, docente = docente, admin = admin, pos = pos)
-
-@router.route('/home/mallas/editar/<pos>/<idPersona>/<docente>/<admin>', methods=["POST"])
-def modificar_mallas(pos, idPersona, docente, admin):
     mcc = MallaCurricularControl()
     data = request.form
     pos = data["id"]
-    malla = mcc._list().getData(int(pos)-1)   
+    malla = mcc._list().getData(int(pos)-1)
 
-    #TODO ...Validar
     mcc._mallaCurricular = malla
     mcc._mallaCurricular._nombre = data["nombre"]
     mcc._mallaCurricular._descripcion = data["descripcion"]
-    mcc._mallaCurricular._vigencia = data["vigencia"]   
+    mcc._mallaCurricular._vigencia = data["vigencia"]
     mcc.merge(int(pos)-1)
 
-    return render_template("academico/malla.html", idPersona=idPersona, docente = docente, admin = admin)
+    return render_template('academico/editMalla.html', idPersona=idPersona, docente = docente, admin = admin, pos = pos, malla = malla)
 
-#---------------------------------------------Ordenar -  Materia--------------------------------------------------#
+
+#--------------------------------------------------------------------Ciclo-------------------------------------------------------------------------------------------------#
+@router.route('/home/ciclos/<idPersona>/<docente>/<admin>')
+def lista_ciclos(idPersona, docente, admin):
+    cc  = CicloControl()
+    list = cc._list()
+    list.sort_models("_id")
+    return render_template('academico/ciclos.html', lista=cc.to_dic_lista(list), idPersona=idPersona, docente = docente, admin = admin)
+
+#Ordenar Ciclo
+@router.route('/home/ciclo/<tipo>/<attr>/<metodo>')
+def lista_ciclo_ordenar(tipo, attr, metodo):
+    cc = CicloControl()
+    
+    # E y D - Ordenar
+    lista_ciclos = cc._list()
+    #-----------------------------------------------------#
+    lista_ciclos.sort_models(attr, int(tipo), int(metodo))
+    
+    
+    return make_response(
+        jsonify({"msg": "OK", "code": 200, "data": cc.to_dic_lista(lista_ciclos)}),
+        200
+    )
+
+#Buscar Ciclo
+@router.route('/home/ciclo/busqueda/<data>/<attr>')
+def buscar_ciclo(data, attr):
+    cc = CicloControl()
+    list = Linked_List()
+    
+    if attr == "_nombre" or attr == "_descripcion" or attr == "_fecha_inicio" or attr == "_fecha_fin":
+        list = cc._list().lineal_binary_search_models(data, attr)
+    else:
+        ciclo = cc._list().binary_search_models(data, attr)
+        list.addNode(ciclo)
+    
+    return make_response(
+        jsonify({"msg": "OK", "code": 200, "data": cc.to_dic_lista(list)}),
+        200
+    )
+
+#Vista de crear ciclo
+@router.route('/home/ciclos/agregar/<idPersona>/<docente>/<admin>')
+def agregar_ciclo(idPersona, docente, admin):
+    return render_template('academico/addCiclo.html', idPersona=idPersona, docente = docente, admin = admin)
+
+#Guardar Ciclo
+@router.route('/home/agregarCiclo/<idPersona>/<docente>/<admin>', methods=["POST"])
+def addCiclo(idPersona, docente, admin):
+    cc = CicloControl()
+    data = request.form
+
+    cc._ciclo._descripcion = data["descripcion"]
+    cc._ciclo._vigencia = data["vigencia"]  
+    cc._ciclo._malla_curricular = data["malla_curricular"]
+    cc.save
+    flash('¡Ciclo agregado exitosamente!', 'success')
+    return render_template('academico/addCiclo.html', idPersona=idPersona, docente = docente, admin = admin)
+
+#Editar Ciclo
+@router.route('/home/ciclos/editarCiclo/<idPersona>/<docente>/<admin>', methods=["POST"])
+def modificar_ciclos_render(pos, idPersona, docente, admin):
+    cc = CicloControl()
+    data = request.form
+    pos = data["id"]
+    ciclo = cc._list().getData(int(pos)-1)
+
+    cc._ciclo = ciclo
+    cc._ciclo._descripcion = data["descripcion"]
+    cc._ciclo._vigencia = data["vigencia"]
+    cc._ciclo._malla_curricular = data["malla_curricular"]
+    cc.merge(int(pos)-1)
+
+    return render_template('academico/editCiclo.html', idPersona=idPersona, docente = docente, admin = admin, pos = pos, ciclo = ciclo)
+
+#---------------------------------------------Periodo Academico--------------------------------------------------#
+
+@router.route('/home/periodos/<idPersona>/<docente>/<admin>')
+def lista_periodo(idPersona, docente, admin):
+    pc  = PeriodoAcademicoControl()
+    list = pc._list()
+    list.sort_models("_id")
+    return render_template('administrativo/periodoAcademico.html', lista=pc.to_dic_lista(list), idPersona=idPersona, docente = docente, admin = admin)
+
+#Ordenar Periodo Academico
+@router.route('/home/periodo/<tipo>/<attr>/<metodo>')
+def lista_periodo_ordenar(tipo, attr, metodo):
+    pc = PeriodoAcademicoControl()
+    
+    # E y D - Ordenar
+    lista_periodos = pc._list()
+    #-----------------------------------------------------#
+    lista_periodos.sort_models(attr, int(tipo), int(metodo))
+    
+    
+    return make_response(
+        jsonify({"msg": "OK", "code": 200, "data": pc.to_dic_lista(lista_periodos)}),
+        200
+    )
+#Buscar Periodo Academico
+@router.route('/home/periodo/busqueda/<data>/<attr>')
+def buscar_periodo(data, attr):
+    pc = PeriodoAcademicoControl()
+    list = Linked_List()
+    
+    if attr == "_nombre" or attr == "_descripcion" or attr == "_fecha_inicio" or attr == "_fecha_fin":
+        list = pc._list().lineal_binary_search_models(data, attr)
+    else:
+        periodo = pc._list().binary_search_models(data, attr)
+        list.addNode(periodo)
+    
+    return make_response(
+        jsonify({"msg": "OK", "code": 200, "data": pc.to_dic_lista(list)}),
+        200
+    )
+
+#Vista de crear periodo academico
+@router.route('/home/periodos/agregar/<idPersona>/<docente>/<admin>')
+def agregar_periodo(idPersona, docente, admin):
+    return render_template('administrativo/addPeriodo.html', idPersona=idPersona, docente = docente, admin = admin)
+
+@router.route('/home/addPeriodoAcademico/<idPersona>/<docente>/<admin>', methods=["POST"])  
+def addPeriodoAcademico(idPersona, docente, admin):
+    pc = PeriodoAcademicoControl()
+    data = request.form
+    
+    # Capturar las fechas desde el formulario
+    fecha_inicio = data["fecha_inicio"]
+    fecha_fin = data["fecha_fin"]
+    
+    try:
+        # Convertir las fechas al formato %d/%m/%Y
+        fecha_inicio_formateada = datetime.strptime(fecha_inicio, '%Y-%m-%d').strftime('%d/%m/%Y')
+        fecha_fin_formateada = datetime.strptime(fecha_fin, '%Y-%m-%d').strftime('%d/%m/%Y')
+        
+        # Asignar las fechas formateadas al objeto PeriodoAcademico
+        pc._periodo_academico._fecha_inicio = fecha_inicio_formateada
+        pc._periodo_academico._fecha_fin = fecha_fin_formateada
+        
+        # Guardar el periodo académico
+        pc.save
+    except ValueError:
+        return "Error en el formato de la fecha"
+
+    return render_template('administrativo/addPeriodo.html', idPersona=idPersona, docente=docente, admin=admin)
+
+
+
+
+#--------------------------------------------------Materia--------------------------------------------------------#
 
 @router.route('/home/listamaterias/<idPersona>/<docente>/<admin>')
 def lista_materia(idPersona, docente, admin):
@@ -799,8 +963,6 @@ def buscar_personas(data, attr):
         jsonify({"msg": "OK", "code": 200, "data": pc.to_dic_lista(list)}),
         200
     )
-
-
 
 @router.route('/home/personas/agregar/<idPersona>/<docente>/<admin>')
 def ver_personas(idPersona, docente, admin):
