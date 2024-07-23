@@ -2,76 +2,25 @@
 {% block content %}
 <script>
     $(document).ready(function(){
-        $("#link").click(function(){
-            create();
-        });
-
-        $("#busqueda").change(function(){
-            elegir_busqueda();
-        });
-
-        $("#busca").click(function(){
-            buscar();
-        });
-    });
-
-    function tabla(url){
-        $.ajax({
-            method: "GET",
-            url: url,
-            contentType: 'json',
-            success: function(data){
-                if(data.code == '200'){
-                    var html = '';
-                    $.each(data.data, function(i, info){
-                        html += "<tr>";
-                        html += "<td>" + info.id + "</td>";
-                        html += "<td>" + info.dni + "</td>";
-                        html += "<td>" + info.nombre + "</td>";
-                        html += "<td>" + info.apellido + "</td>";
-                        html += "<td>" + info.fechaNacimiento + "</td>";
-                        html += "<td>" + info.numTelefono + "</td>";
-                        html += "<td>" + info.idCuenta + "</td>";
-                        html += "<td><a href='/docentes/editar/" + info.id + "' class='btn btn-primary btn-sm'>Modificar</a></td>";
-                        html += "<td><a href='/login/rol/" + info.id + "' class='btn btn-success btn-sm'>Roles</a></td>";
-                        html += "<td><a href='/docentes/eliminar/" + info.id + "' class='btn btn-danger btn-sm'>Eliminar</a></td>";
-                        html += "</tr>";
-                    });
-                    $("#tabla tbody").html(html);
-                }else{
-                    html += "<tr><td colspan='9'>No se encontraron datos</td></tr>";
-                    $("#tabla tbody").html(html);
-                }
+        // Mostrar u ocultar campos basados en la selección del rol
+        $('#rol').change(function(){
+            if ($(this).val() == 'Docente') {
+                $('#docente-fields').show();
+            } else {
+                $('#docente-fields').hide();
             }
         });
-    }
-
-    function create(){
-        var aux = $("#tipo").prop("checked");
-        var select = $("#criterio").find(":selected").val();
-        if(aux){
-            tabla("http://localhost:5000/home/personas/2/"+select+"/"+ 4);  //cambiar siempre
-        }else{
-            tabla("http://localhost:5000/home/personas/1/"+select+"/"+ 4); //cambiar siempre
+        
+        // Inicializar la visibilidad de los campos al cargar la página
+        if ($('#rol').val() == 'Docente') {
+            $('#docente-fields').show();
+        } else {
+            $('#docente-fields').hide();
         }
-    }
-
-    function buscar(){
-        var atributo = $("#criterio").find(":selected").val();
-        var valor = $("#valor").val();
-        tabla("http://localhost:5000/home/personas/busqueda/"+valor+"/"+atributo); //cambiar
-    }
-
-    function elegir_busqueda(){
-        var metodo = $("#busqueda").find(":selected").val();
-        if(metodo == 1){
-            $("#criterio").html('<option value="dni">DNI</option><option value="nombre">Nombre</option>');
-        }else{
-            $("#criterio").html('<option value="apellido">Apellido</option><option value="idCuenta">ID Cuenta</option>');
-        }
-    }
+    });
 </script>
-{%block barra%}
+
+{% block barra %}
 <!-- Page Navbar -->
 <nav id="scrollspy" class="navbar page-navbar navbar-expand-md navbar-brand fixed-top" data-spy="affix" data-offset-top="20">
     <div class="container">
@@ -122,7 +71,8 @@
         </div>
     </div>
 </nav><!-- End of Page Navbar -->   
-{%endblock%}
+{% endblock %}
+
 <br>
 <br>
 
@@ -133,9 +83,9 @@
     <form id="form" class="custom-form booking-form" action="/home/personas/addRol/verificar/{{idPersona}}/{{docente}}/{{admin}}/{{idItem}}" method="post" role="form">
         <div class="card mb-4">
             <div class="card-body">
-                {% with messages = get_flashed_messages(category_filter='error', with_categories=true) %}
+                {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
-                        <div class="alert alert-danger">
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                             {% for category, message in messages %}
                                 <p>{{ message }}</p>
                             {% endfor %}
@@ -143,21 +93,45 @@
                     {% endif %}
                  {% endwith %}
                 <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="criterio">Rol:</label>
+                        <select id="rol" name="rol" class="custom-select" style="margin-left: 30%">
+                            <option value="Administrador">Administrador</option>
+                            <option value="Docente">Docente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="docente-fields" style="display: none;">
+                    <div class="row mb-3">
                         <div class="col-md-4">
-                            <label for="criterio">Rol:</label>
-                            <select id="rol" name="rol" class="custom-select" style="margin-left: 15%">
-                                <option value="Administrador">Admnistrador</option>
-                                <option value="Docente">Docente</option>
+                            <label for="titulo">Título:</label>
+                            <input type="text" id="titulo" name="titulo" class="form-control" style="margin-left: 30%;">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="cubiculo">Cubículo:</label>
+                            <input type="text" id="cubiculo" name="cubiculo" class="form-control", style="margin-left: 30%;">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="contrato">Tipo contrato:</label>
+                            <select id="contrato" name="contrato" class="form-control" style="margin-left: 30%">
+                                <option value="Tiempo Completo">Tiempo Completo</option>
+                                <option value="Medio Tiempo">Medio Tiempo</option>
+                                <option value="Por Hora">Por Hora</option>
                             </select>
                         </div>
-                        
-                        <button type="submit" class="btn-info text-white" style="margin-left: 5%;">Agregar</button>
-                </div>>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <button type="submit" class="btn btn-info text-white" style="margin-left: 5%;">Agregar</button>
+                </div>
             </div>
         </div>
     </form>
-<br>
-<br>
-    
 </div>
 {% endblock %}

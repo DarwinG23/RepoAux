@@ -815,19 +815,7 @@ def agregar_cuenta(idPersona, docente, admin):
         else:
             flash('Error al intentar crear la cuenta', 'error')
             return redirect(url_for('router.crear_cuenta', idPersona=idPersona, docente = docente, admin = admin))
-        
 
-    
-    cc._cuenta._correo = data["correo"]
-    cc._cuenta._contrasenia = data["correo"]
-    cc._cuenta._estado = True
-    cc._cuenta._idPersona = data["persona"]
-    if True:
-        flash('Cuenta creada correctamente', 'error')
-        return redirect(url_for('router.crear_cuenta', idPersona=idPersona, docente = docente, admin = admin))
-    else:
-        flash('Error al intentar crear la cuenta', 'error')
-        return redirect(url_for('router.crear_cuenta', idPersona=idPersona, docente = docente, admin = admin))
 
 @router.route('/login/rol/<pos>/')
 def ver_roles(pos):
@@ -835,7 +823,7 @@ def ver_roles(pos):
     rol = rdc._list().getData(int(pos)-1)
     return render_template("login/rol.html",  lista = rol.serializable, idRol = pos) 
 
-#Ordenar
+
 
 @router.route('/home/personas/ordenar/<tipo>/<attr>/<metodo>')
 def lista_personas_ordenar(tipo, attr, metodo):
@@ -895,6 +883,7 @@ def add_rol(idPersona, docente, admin, idItem):
     data = request.form
     pc = PersonaDaoControl()
     rc = RolDaoControl()
+    dc = DocenteControl()
     personas = pc._list()
     
     
@@ -923,20 +912,40 @@ def add_rol(idPersona, docente, admin, idItem):
                     rc._rol._nombre = "Administrador"
                     rc._rol._descripcion = "Rol de Administrador"
                 elif rol_new == "Docente":
+                    docentes = dc._list()
+                    for i in range(0, docentes._length):
+                        if docentes.getData(i)._idPersona == persona._id:
+                            flash('La persona ya es docente', 'error')
+                            return redirect(url_for('router.ver_add_rol', idPersona=idPersona, docente = docente, admin = admin, idItem = idItem))
+                            break
                     rc._rol._nombre = "Docente"
                     rc._rol._descripcion = "Rol de Docente"
+                    dc._docente._titulo = data["titulo"]
+                    dc._docente._cubiculo = data["cubiculo"]
+                    dc._docente._tipoContrato = data["contrato"]
+                    dc._docente._idPersona = idItem
+                    
+                    print("DATOS DOCENTE")
+                    print(dc._docente._titulo)
+                    print(dc._docente._cubiculo)
+                    print(dc._docente._tipoContrato)
+                    print(dc._docente._idPersona)
                 else:
                     flash('Rol no valido', 'error')
                     return redirect(url_for('router.ver_add_rol', idPersona=idPersona, docente = docente, admin = admin, idItem = idItem))
                 
                 rc._rol._estado = 1
                 rc._rol._idPersona = idItem
-                if rc.save:
-                    flash('Rol agregado correctamente, ahora ' + str(persona._nombre) + " es " + str(rol_new) , 'error')
-                    return redirect(url_for('router.ver_add_rol', idPersona=idPersona, docente = docente, admin = admin, idItem = idItem))
-                else:
-                    flash('Error al intentar guardar el rol', 'error')
-                    return redirect(url_for('router.ver_add_rol', idPersona=idPersona, docente = docente, admin = admin, idItem = idItem))
+                
+                flash("Exito", 'error')
+                return redirect(url_for('router.ver_add_rol', idPersona=idPersona, docente = docente, admin = admin, idItem = idItem)) 
+            
+                # if rc.save and dc.save:
+                #     flash('Rol agregado correctamente, ahora ' + str(persona._nombre) + " es " + str(rol_new) , 'error')
+                #     return redirect(url_for('router.ver_add_rol', idPersona=idPersona, docente = docente, admin = admin, idItem = idItem))
+                # else:
+                #     flash('Error al intentar guardar el rol', 'error')
+                #     return redirect(url_for('router.ver_add_rol', idPersona=idPersona, docente = docente, admin = admin, idItem = idItem))
                 
                      
                 

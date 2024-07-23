@@ -127,7 +127,7 @@
 
 <div class="container my-4">
     <div class="text-center mb-4">
-        <h1 class="display-5 text-dark">Personas</h1>
+        <h1 class="display-5 text-dark">Cuentas</h1>
     </div>
     
     <div class="card mb-4">
@@ -187,7 +187,11 @@
                         <td>{{ item.id}}</td>
                         <td>{{ item.correo }}</td>
                         <td>{{ item.contrasenia }}</td>
-                        <td>{{ item.estado }}</td>
+                        {%if item.estado == 1%}
+                            <td>Activa</td>
+                        {%else%}
+                            <td>Desactivada</td>
+                        {%endif%}
                         <td><a href="/docentes/editar/{{ item.id }}" class="btn btn-primary btn-sm">Modificar</a></td>
                     </tr>
                 {% endfor %}
