@@ -76,7 +76,8 @@ def login():
             #recooremos el array de asignaciones
             for i in range(0, len(arrayasignaciones)):
                 
-                idMateria = arrayasignaciones[i]._id_materia                
+                idMateria = arrayasignaciones[i]._id_materia 
+                print("ID MATERIA: ", idMateria)               
                 try:
                    materia = mc._list().binary_search_models(idMateria, "_id")
                 except:
@@ -84,6 +85,10 @@ def login():
 
                 if materia != -1:
                     listaMaterias.addNode(materia)
+                    
+            print("###############################\n")
+            listaMaterias.print
+            print("\n")
                 
             if admin != -1:
                 return render_template('vista_docente/materias.html', lista = pc.to_dic_lista(listaMaterias), idPersona=persona._id, admin = "admin", docente = "docente")
@@ -93,10 +98,38 @@ def login():
     else:
         flash('Contraseña incorrecta', 'error')
         return redirect(url_for('router.inicio'))
+
+
+@router.route('/home/crearCursa/<idPersona>/<docente>/<admin>/<idItem>')
+def crear_cursa(idPersona, docente, admin, idItem):
+    print("ID ITEM: ", idItem)
+    pec = PeriodoAcademicoControl()
+    listaPeriodos = pec._list()
+    listaPeriodos.sort_models("_id")
     
+    ac = AsignacionDaoControl()
+    listaAsignaciones = ac._list()
+    listaAsignaciones.sort_models("_id")
+    
+    return render_template('administrativo/crearCursa.html',  idPersona=idPersona, docente = docente, admin = admin, idItem = idItem, periodos = pec.to_dic_lista(listaPeriodos), asignaciones = ac.to_dic_lista(listaAsignaciones))
 
-
-
+#/home/addCursa/{{idPersona}}/{{docente}}/{{admin}}/{{idItem}}
+@router.route('/home/addCursa/<idPersona>/<docente>/<admin>/<idItem>', methods=["POST"])
+def guardar_cursa(idPersona, docente, admin, idItem):
+    data = request.form
+    print("####################")
+    print("ID ITEM: ", idItem)
+    print(data)
+    cc = CursaControl()
+    
+    cc._cursa._paralelo = data["paralelo"]
+    cc._cursa._idEstudiante = idItem
+    cc._cursa._asignacion = data["asignacion"]
+    cc._cursa._periodoAcademico = data["periodo"]
+    cc.save
+    flash('Se asigno al curso correctamente', 'error')
+    return redirect(url_for('router.crear_cursa', idPersona=idPersona, docente = docente, admin = admin, idItem = idItem))
+   
 @router.route('/home/docenteMaterias/<idPersona>/<docente>/<admin>')
 def docenteMaterias(idPersona, docente, admin):
     pc = PersonaDaoControl()
@@ -120,6 +153,10 @@ def docenteMaterias(idPersona, docente, admin):
 
         if materia != -1:
             listaMaterias.addNode(materia)
+            
+    print("###############################\n")
+    listaMaterias.print
+    print("\n")
                     
     return render_template('vista_docente/materias.html',lista = ac.to_dic_lista(listaMaterias), idPersona=idPersona, docente = docente, admin = admin)
  
@@ -158,8 +195,10 @@ def home_materias(idPersona, docente, admin):
 
             if materia != -1:
                 listaMaterias.addNode(materia)
-            
+        
+        print("\n")
         listaMaterias.print
+        print("\n")
     
     return render_template('vista_docente/materias.html', lista = pc.to_dic_lista(listaMaterias),idPersona=idPersona, docente = docente, admin = admin)
 
@@ -451,6 +490,7 @@ def buscar_docente(data, attr):
 def lista_asignacion(idPersona, docente, admin):
     ac  = AsignacionDaoControl()
     list = ac._list()
+    list.sort_models("_id")
     return render_template('seguimiento/listaAsignacion.html', lista=ac.to_dic_lista(list), idPersona=idPersona, docente = docente, admin = admin)
 
 
@@ -829,6 +869,36 @@ def crear_materia(idPersona, docente, admin):
     return render_template('academico/crearMateria.html', idPersona=idPersona, docente = docente, admin = admin, ciclos = cc.to_dic_lista(ciclos))
 
 
+#"/home/asignaciones/agregar/{{idPersona}}/{{docente}}/{{admin}}"
+@router.route('/home/asignaciones/agregar/<idPersona>/<docente>/<admin>')
+def crear_asignacion(idPersona, docente, admin):
+    mc = MateriaControl()
+    listaMaterias = mc._list()
+    listaMaterias.sort_models("_id")
+    dc = DocenteControl()
+    listaDocentes = dc._list()
+    listaDocentes.sort_models("_dni")
+    return render_template('seguimiento/crearAsignacion.html', idPersona=idPersona, docente = docente, admin = admin, materias = mc.to_dic_lista(listaMaterias), docentes = dc.to_dic_lista(listaDocentes))
+
+
+
+@router.route('/home/addAsignacion/<idPersona>/<docente>/<admin>', methods=["POST"])
+def agregar_asignacion(idPersona, docente, admin):
+    data = request.form
+    print(data)
+    ac = AsignacionDaoControl()
+    
+    ac._asignacion._id_materia = data["materia"]
+    ac._asignacion._cedula_docente = data["docente"]
+    ac._asignacion._numero_unidades = 3
+    
+    if ac.save:
+        flash('Asignacion creada correctamente', 'error')
+        return redirect(url_for('router.crear_asignacion', idPersona=idPersona, docente = docente, admin = admin))  
+    else:
+        flash('Error al intentar crear la asignacion', 'error')
+        return redirect(url_for('router.crear_asignacion', idPersona=idPersona, docente = docente, admin = admin))
+
 @router.route('/home/addMateria/<idPersona>/<docente>/<admin>', methods=["POST"])
 def agregar_materia(idPersona, docente, admin):
     data = request.form
@@ -1016,6 +1086,11 @@ def guardar_persona(idPersona, docente, admin):
         flash('Cedula no valida', 'error')
         return redirect(url_for('router.registrar_persona', idPersona=idPersona, docente = docente, admin = admin))
     
+
+#"/estudiantes/cursa/{{idPersona}}/{{docente}}/{{admin}}/{{ item.id }}"
+#/home/estudiantes/cursa/1/docente/admin/2
+#/home/crearCursa/1/docente/admin/1
+
 
 #/home/estudiantes/agregar/{{idPersona}}/{{docente}}/{{admin}}
 

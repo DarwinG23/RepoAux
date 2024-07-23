@@ -87,7 +87,7 @@ class Materia:
             asignaciones = Linked_List()
         else:
             asignaciones = ac._list()
-            asignaciones = asignaciones.lineal_binary_search_models(materia._id, "_id_materia")
+            asignaciones = asignaciones.lineal_binary_search_models(str(materia._id), "_id_materia")
         
         cc = CicloControl()
         if cc._list().isEmpty:

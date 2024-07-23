@@ -162,6 +162,7 @@
                     <th>Asistencias</th>
                     <th>Colegio-Procedencia</th>
                     <th>Acciones</th>
+                    <th>Asignar</th>
                 </tr>
             </thead>
             <tbody>
@@ -173,6 +174,7 @@
                         <td>{{ item.asistencia }}</td>
                         <td>{{ item.colegioProcedencia }}</td>
                         <td><a href="/estudiantes/editar/{{ item.id }}" class="btn btn-primary btn-sm">Modificar</a></td>
+                        <td><a href="/home/crearCursa/{{idPersona}}/{{docente}}/{{admin}}/{{ item.id }}" class="btn btn-primary btn-sm">Asignar Curso</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
